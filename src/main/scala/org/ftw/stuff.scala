@@ -10,12 +10,7 @@ trait Responder[-A] {
   def render(env: Env)(req: A): Response
 }
 
-trait ResponderFactory[-A, R <: Responder[A]] {
-}
-
-class Path[A, E <: BaseEnv] {
-  def ~>[R <: Responder[A]](resp: ResponderFactory[A, R]): Path[A, E with R#Env] =
-    new Path[A, E with R#Env]
+trait ResponderFactory[-A, +R <: Responder[A]] {
 }
 
 trait Response

@@ -4,10 +4,12 @@ import org.specs2.mutable.Specification
 
 object StuffSpecs extends Specification {
   
-  val q = new Path[Unit, BaseEnv]
-  val q2 = q ~> (new Resp1Factory) ~> (new Resp2Factory)
+  val a = Path(Vector("a")) handledBy (new Resp1Factory)
+  val b = Path(Vector("b")) handledBy (new Resp2Factory)
   
-  assertType(q2).test[Path[Unit, SessionEnv with HttpEnv]]
+  val ab = a ~ b
+  
+  assertType(ab).test[HandledPaths[Unit, SessionEnv with HttpEnv]]
   
   def assertType[A](a: A) = new {
     def test[B](implicit x: A =:= B) = x
