@@ -9,7 +9,9 @@ object StuffSpecs extends Specification {
   
   val ab = a ~ b
   
-  assertType(ab).test[HandledPaths[Unit, SessionEnv with HttpEnv]]
+  Runner.run(ab, new SessionEnv with HttpEnv {})
+  
+  assertType(ab).test[HandledPaths[Unit, HttpResponse, SessionEnv with HttpEnv]]
   
   def assertType[A](a: A) = new {
     def test[B](implicit x: A =:= B) = x
@@ -18,19 +20,23 @@ object StuffSpecs extends Specification {
   trait SessionEnv extends BaseEnv
   trait HttpEnv extends BaseEnv
   
-  class Resp1 extends Responder[Unit] {
+  class Resp1 extends Responder[Unit, HttpResponse] {
     type Env = SessionEnv
     
-    def render(env: Env)(u: Unit) = new Response {}
+    def render(env: Env)(u: Unit) = HttpResponse("text/plain", null)
   }
   
-  class Resp1Factory extends ResponderFactory[Unit, Resp1]
+  class Resp1Factory extends ResponderFactory[Unit, HttpResponse, Resp1] {
+    def apply() = new Resp1
+  }
   
-  class Resp2 extends Responder[Unit] {
+  class Resp2 extends Responder[Unit, HttpResponse] {
     type Env = HttpEnv
     
-    def render(env: Env)(u: Unit) = new Response {}
+    def render(env: Env)(u: Unit) = HttpResponse("text/plain", null)
   }
   
-  class Resp2Factory extends ResponderFactory[Unit, Resp2]
+  class Resp2Factory extends ResponderFactory[Unit, HttpResponse, Resp2] {
+    def apply() = new Resp2
+  }
 }
