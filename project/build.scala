@@ -19,13 +19,13 @@ object Build extends Build {
     settings = BuildSettings.buildSettings
   ) aggregate(core, http, servlet)
   
-  lazy val core: Project = Project("ftw-core", file("core"), 
+  lazy val core: Project = Project("core", file("core"), 
     settings = BuildSettings.buildSettings)
   
-  lazy val http: Project = Project("ftw-http", file("http"), 
+  lazy val http: Project = Project("http", file("http"), 
     settings = BuildSettings.buildSettings) dependsOn(core)
   
-  lazy val servlet: Project = Project("ftw-http-servlet", file("http-servlet"), 
+  lazy val servlet: Project = Project("http-servlet", file("http-servlet"), 
     settings = BuildSettings.buildSettings ++ (
       libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided"

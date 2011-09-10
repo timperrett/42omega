@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <web-app>
   <filter>
-    <filter-name>arbitrary</filter-name>
-    <filter-class>org.ftw.LikeABoss</filter-class>
+    <filter-name>Sample</filter-name>
+    <filter-class>ftw.examples.servlet.LikeABoss</filter-class>
   </filter>
-  
   <filter-mapping>
-    <filter-name>arbitrary</filter-name>
+    <filter-name>Sample</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 </web-app>

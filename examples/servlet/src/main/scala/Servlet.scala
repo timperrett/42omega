@@ -1,6 +1,6 @@
 package ftw.examples.servlet
 
-import ftw._
+import ftw._, http._, servlet._
 
 class LikeABoss extends OmegaFilter {
   def routingAndEnv = 
