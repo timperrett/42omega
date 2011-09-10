@@ -15,26 +15,30 @@ object BuildSettings {
 }
 
 object Build extends Build {
+  import BuildSettings.buildSettings
+  
   lazy val root = Project("ftw", file("."),
-    settings = BuildSettings.buildSettings
+    settings = buildSettings
   ) aggregate(core, http, servlet)
   
   lazy val core: Project = Project("core", file("core"), 
-    settings = BuildSettings.buildSettings)
+    settings = buildSettings)
   
   lazy val http: Project = Project("http", file("http"), 
-    settings = BuildSettings.buildSettings) dependsOn(core)
+    settings = buildSettings) dependsOn(core)
   
   lazy val servlet: Project = Project("http-servlet", file("http-servlet"), 
-    settings = BuildSettings.buildSettings ++ (
+    settings = buildSettings ++ (
       libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided"
       ))) dependsOn(http)
   
-  lazy val samples = Project("examples", file("examples"),
-    settings = parentSettings,
-    aggregate = Seq(fsmSample, camelSample)
-  )  
+  // lazy val examples = Project("examples", file("examples"),
+  //   settings = buildSettings,
+  //   aggregate = Seq(fsmSample, camelSample)
+  // )
+  
+  // lazy val exampleServlet = Project("")
 }
 
 //settings(com.github.siasia.WebPlugin.webSettings :_*)
