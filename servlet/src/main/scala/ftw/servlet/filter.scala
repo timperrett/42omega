@@ -1,7 +1,6 @@
-package ftw.http.servlet
+package ftw.servlet
 
 import ftw._, http._
-
 import javax.servlet.{Filter, ServletRequest, ServletResponse, FilterChain, FilterConfig}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
@@ -26,21 +25,5 @@ trait OmegaFilter extends Filter {
     os.write(str.toArray)
     
     resp.setContentType(contentType)
-  }
-}
-
-class LikeABoss extends OmegaFilter {
-  def routingAndEnv = 
-    ("foo" handledBy FooFactory, new BaseEnv {})
-  
-  object FooFactory extends ResponderFactory[Unit, HttpResponse, Foo.type] {
-    def apply() = Foo
-  }
-  
-  object Foo extends Responder[Unit, HttpResponse] {
-    type Env = BaseEnv
-    
-    def render(env: Env)(u: Unit) =
-      HttpResponse("text/plain", "Like a boss!".getBytes.toStream)
   }
 }
