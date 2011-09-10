@@ -10,6 +10,12 @@ trait ResponderFactory[-A, +B, +R <: Responder[A, B]] {
   def apply(): R
 }
 
+object ResponderFactory {
+  def const[A, B](const: Responder[A, B]): ResponderFactory[A, B, Responder[A, B]] = new ResponderFactory[A, B, Responder[A, B]] {
+    val apply = const
+  }
+}
+
 case class Path(parts: Vector[String]) {
   def /(path: String): Path =
     Path(parts :+ path)
