@@ -3,12 +3,12 @@ package org.ftw
 import javax.servlet.{Filter, ServletRequest, ServletResponse, FilterChain, FilterConfig}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-trait Runner[A, B <: Response] {
+trait Runner[A, B] {
   def run[E <: BaseEnv](hp: HandledPaths[A, B, E], env: E)
 }
 
 object Runner {
-  def run[A, B <: Response, E <: BaseEnv](hp: HandledPaths[A, B, E], env: E)(implicit r: Runner[A, B]) =
+  def run[A, B, E <: BaseEnv](hp: HandledPaths[A, B, E], env: E)(implicit r: Runner[A, B]) =
     r.run(hp, env)
   
   
