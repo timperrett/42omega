@@ -3,4 +3,7 @@
  :sbt-subprojects (
    (:name "core" :deps ())
    (:name "http" :deps ("core"))
-   (:name "http-servlet" :deps ("core" "http"))))
+   (:name "servlet" :deps ("core" "http"))
+   (:name "netty" :deps ("core"))
+   (:name "transformers" :deps ("core"))
+   (:name "example" :deps ("core" "http" "servlet" "netty"))))
