@@ -1,4 +1,3 @@
-* DSL for the path types
 * Refactoring stuff
 
   * Subprojects
