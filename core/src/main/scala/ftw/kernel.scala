@@ -1,5 +1,17 @@
 package ftw
 
+trait BaseEnv
+
+trait Responder[-A, +B] {
+  type Env <: BaseEnv
+  
+  def render(env: Env)(req: A): B
+}
+
+trait ResponderFactory[-A, +B, +R <: Responder[A, B]] {
+  def apply(): R
+}
+
 case class Path(parts: Vector[String]) {
   def /(path: String): Path =
     Path(parts :+ path)
@@ -13,4 +25,13 @@ case class HandledPaths[-A, +B, E <: BaseEnv](paths: Map[Vector[String], Respond
    
   def ~[A2 <: A, B2 >: B, E2 <: BaseEnv](hp: HandledPaths[A2, B2, E2]): HandledPaths[A2, B2, E with E2] =
     HandledPaths[A2, B2, E with E2]((paths ++ hp.paths).asInstanceOf[Disappointment[A2, B2, E2]])
+}
+
+trait Runner[A, B] {
+  def run[E <: BaseEnv](hp: HandledPaths[A, B, E], env: E)
+}
+
+object Runner {
+  def run[A, B, E <: BaseEnv](hp: HandledPaths[A, B, E], env: E)(implicit r: Runner[A, B]) =
+    r.run(hp, env)
 }
