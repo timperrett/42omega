@@ -10,7 +10,7 @@ object BuildSettings {
     version      := buildVersion,
     scalaVersion := buildScalaVersion,
     scalacOptions += "-deprecation",
-    crossScalaVersions := Seq("2.8.1", "2.9.0", "2.9.0-1")
+    crossScalaVersions := Seq("2.8.1", "2.9.0", "2.9.0-1", "2.9.1")
   )
 }
 
@@ -30,6 +30,11 @@ object Build extends Build {
       libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided"
       ))) dependsOn(http)
+  
+  lazy val samples = Project("examples", file("examples"),
+    settings = parentSettings,
+    aggregate = Seq(fsmSample, camelSample)
+  )  
 }
 
 //settings(com.github.siasia.WebPlugin.webSettings :_*)
