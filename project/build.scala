@@ -10,14 +10,11 @@ object BuildSettings {
     version      := buildVersion,
     scalaVersion := buildScalaVersion,
     scalacOptions += "-deprecation",
-    crossScalaVersions := Seq("2.8.1", "2.9.0", "2.9.0-1"),
-    resolvers ++= Seq(
-      Resolver.file(".m2", file(Path.userHome+"/.m2/repository"))
-    )
+    crossScalaVersions := Seq("2.8.1", "2.9.0", "2.9.0-1")
   )
 }
 
-object SudsBuild extends Build {
+object 42OmegaBuild extends Build {
   lazy val root = Project("ftw", file("."),
     settings = BuildSettings.buildSettings
   ) aggregate(core, http, servlet)
