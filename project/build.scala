@@ -30,6 +30,12 @@ object Build extends Build {
       libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided"
       ))) dependsOn(http)
+
+  lazy val netty: Project = Project("http-netty", file("http-netty"),
+    settings = BuildSettings.buildSettings ++ Seq(
+      libraryDependencies += "org.jboss.netty" % "netty" % "3.2.5.Final",
+      resolvers += "JBoss repo" at "http://repository.jboss.org/nexus/content/groups/public"
+    ))
 }
 
 //settings(com.github.siasia.WebPlugin.webSettings :_*)
