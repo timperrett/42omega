@@ -1,0 +1,6 @@
+(:project-name "ftw"
+ :use-sbt t
+ :sbt-subprojects (
+   (:name "ftw-core" :deps ())
+   (:name "ftw-http" :deps ("ftw-core"))
+   (:name "ftw-http-servlet" :deps ("ftw-core", "http"))))
