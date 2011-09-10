@@ -41,7 +41,7 @@ trait OmegaFilter extends Filter {
 
 class LikeABoss extends OmegaFilter {
   def routingAndEnv = 
-    (Path(Vector("foo")) handledBy FooFactory, new BaseEnv {})
+    ("foo" handledBy FooFactory, new BaseEnv {})
   
   object FooFactory extends ResponderFactory[Unit, HttpResponse, Foo.type] {
     def apply() = Foo
