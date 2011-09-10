@@ -3,21 +3,33 @@ package ftw.examples.servlet
 import ftw._, http._, servlet._
 
 trait WhatIsItLike {
-  def yeah:String = "Like a BOSS!!!"
+  def yeah: String = "Like a BOSS!!!"
+}
+
+trait WhoWantsIt {
+  def meh = "We do!"
 }
 
 class LikeABoss extends OmegaFilter {
-  def routingAndEnv = 
-    (Path(Vector("foo")) handledBy FooFactory, new WhatIsItLike {})
-  
-  object FooFactory extends ResponderFactory[Unit, HttpResponse, Foo.type] {
-    def apply() = Foo
-  }
-  
+
+  import ResponderFactory.const
+
+  def routingAndEnv =
+    (("foo" handledBy const(Foo)) ~ ("bar" handledBy const(Bar)),
+      new WhatIsItLike with WhoWantsIt {})
+
   object Foo extends Responder[Unit, HttpResponse] {
     type Env = WhatIsItLike
-    
+
     def render(env: Env)(u: Unit) =
       HttpResponse("text/plain", env.yeah.getBytes.toStream)
   }
+
+  object Bar extends Responder[Unit, HttpResponse] {
+    type Env = WhoWantsIt
+
+    def render(env: Env)(u: Unit) =
+      HttpResponse("text/plain", env.meh.getBytes.toStream)
+  }
+
 }
