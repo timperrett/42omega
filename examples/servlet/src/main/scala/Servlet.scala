@@ -12,8 +12,6 @@ trait WhoWantsIt {
 
 class LikeABoss extends OmegaFilter {
 
-  import ResponderFactory.const
-
   def routingAndEnv =
     (("foo" handledBy Foo.factory) ~ ("bar" handledBy Bar.factory),
       new WhatIsItLike with WhoWantsIt {})
