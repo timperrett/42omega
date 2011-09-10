@@ -7,7 +7,6 @@ syntax: glob
 *.off
 *.old
 .DS_Store
-.ensime
 
 # logs
 derby.log
