@@ -1,7 +1,5 @@
-package org.ftw
+package ftw.http
 
-trait Response {
-  val os: Stream[Byte]
-}
+import ftw._
 
 case class HttpResponse(contentType: String, os: Stream[Byte]) extends Response

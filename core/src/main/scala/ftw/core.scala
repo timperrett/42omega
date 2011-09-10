@@ -1,4 +1,10 @@
-package org.ftw
+package ftw
+
+trait BaseEnv
+
+trait Response {
+  val os: Stream[Byte]
+}
 
 trait Responder[-A, +B <: Response] {
   type Env <: BaseEnv

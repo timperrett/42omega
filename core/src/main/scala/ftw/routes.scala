@@ -1,4 +1,4 @@
-package org.ftw
+package ftw
 
 case class Path(parts: Vector[String]) {
   def /(path: String): Path =
