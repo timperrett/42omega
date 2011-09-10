@@ -3,7 +3,7 @@ package org.ftw
 import javax.servlet.{Filter, ServletRequest, ServletResponse, FilterChain, FilterConfig}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-trait Runner[A, B] {
+trait Runner[+A, -B] {
   def run[E <: BaseEnv](hp: HandledPaths[A, B, E], env: E)
 }
 
