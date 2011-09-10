@@ -1,9 +1,7 @@
 package ftw
 
-trait BaseEnv
-
 trait Responder[-A, +B] {
-  type Env <: BaseEnv
+  type Env
   
   def render(env: Env)(req: A): B
 }
@@ -20,18 +18,18 @@ case class Path(parts: Vector[String]) {
     new HandledPaths[A, B, R#Env](Map(parts -> resp.asInstanceOf[ResponderFactory[A, B, Responder[A, B] { type Env = R#Env }]]))
 }
 
-case class HandledPaths[-A, +B, E <: BaseEnv](paths: Map[Vector[String], ResponderFactory[A, B, Responder[A, B] { type Env = E }]]) {
+case class HandledPaths[-A, +B, E](paths: Map[Vector[String], ResponderFactory[A, B, Responder[A, B] { type Env = E }]]) {
   private type Disappointment[A2, B2, E2] = Map[Vector[String], ResponderFactory[A2, B2, Responder[A2, B2] { type Env = E with E2 }]]
    
-  def ~[A2 <: A, B2 >: B, E2 <: BaseEnv](hp: HandledPaths[A2, B2, E2]): HandledPaths[A2, B2, E with E2] =
+  def ~[A2 <: A, B2 >: B, E2](hp: HandledPaths[A2, B2, E2]): HandledPaths[A2, B2, E with E2] =
     HandledPaths[A2, B2, E with E2]((paths ++ hp.paths).asInstanceOf[Disappointment[A2, B2, E2]])
 }
 
 trait Runner[A, B] {
-  def run[E <: BaseEnv](hp: HandledPaths[A, B, E], env: E)
+  def run[E](hp: HandledPaths[A, B, E], env: E)
 }
 
 object Runner {
-  def run[A, B, E <: BaseEnv](hp: HandledPaths[A, B, E], env: E)(implicit r: Runner[A, B]) =
+  def run[A, B, E](hp: HandledPaths[A, B, E], env: E)(implicit r: Runner[A, B]) =
     r.run(hp, env)
 }

@@ -6,7 +6,7 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 trait OmegaFilter extends Filter {
   
-  def routingAndEnv: (HandledPaths[Unit, HttpResponse, E], E) forSome { type E <: BaseEnv }
+  def routingAndEnv: (HandledPaths[Unit, HttpResponse, E], E) forSome { type E }
   
   def init(config: FilterConfig){}
   
