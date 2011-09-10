@@ -61,5 +61,3 @@ object Build extends Build {
     settings = buildSettings ++ jettySettings
   ) dependsOn(servlet) settings(com.github.siasia.WebPlugin.webSettings :_*)
 }
-
-//settings(com.github.siasia.WebPlugin.webSettings :_*)
