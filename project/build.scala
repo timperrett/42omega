@@ -14,7 +14,7 @@ object BuildSettings {
   )
 }
 
-object 42OmegaBuild extends Build {
+object Build extends Build {
   lazy val root = Project("ftw", file("."),
     settings = BuildSettings.buildSettings
   ) aggregate(core, http, servlet)
