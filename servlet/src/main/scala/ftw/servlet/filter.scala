@@ -2,7 +2,7 @@ package ftw.servlet
 
 import ftw._, http._
 import javax.servlet.{Filter, ServletRequest, ServletResponse, FilterChain, FilterConfig}
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import javax.servlet.http.{HttpServletRequest}
 
 trait OmegaFilter extends Filter {
   
