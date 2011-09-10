@@ -1,9 +1,13 @@
 package ftw
 
-trait Responder[-A, +B] {
+trait Responder[-A, +B] { outer =>
   type Env
   
   def render(env: Env)(req: A): B
+  
+  def factory: ResponderFactory[A, B, this.type] = new ResponderFactory[A, B, this.type] {
+    def apply() = outer
+  }
 }
 
 trait ResponderFactory[-A, +B, +R <: Responder[A, B]] {
@@ -11,7 +15,7 @@ trait ResponderFactory[-A, +B, +R <: Responder[A, B]] {
 }
 
 object ResponderFactory {
-  def const[A, B](const: Responder[A, B]): ResponderFactory[A, B, Responder[A, B]] = new ResponderFactory[A, B, Responder[A, B]] {
+  def const[A, B, R <: Responder[A, B]](const: R): ResponderFactory[A, B, R] = new ResponderFactory[A, B, R] {
     val apply = const
   }
 }

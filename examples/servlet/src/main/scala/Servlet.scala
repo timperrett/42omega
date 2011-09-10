@@ -15,7 +15,7 @@ class LikeABoss extends OmegaFilter {
   import ResponderFactory.const
 
   def routingAndEnv =
-    (("foo" handledBy const(Foo)) ~ ("bar" handledBy const(Bar)),
+    (("foo" handledBy Foo.factory) ~ ("bar" handledBy Bar.factory),
       new WhatIsItLike with WhoWantsIt {})
 
   object Foo extends Responder[Unit, HttpResponse] {
