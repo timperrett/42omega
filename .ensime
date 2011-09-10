@@ -6,4 +6,4 @@
    (:name "servlet" :deps ("core" "http"))
    (:name "netty" :deps ("core"))
    (:name "transformers" :deps ("core"))
-   (:name "example" :deps ("core" "http" "servlet" "netty"))))
+   (:name "examples-servlet" :deps ("core" "http" "servlet"))))
