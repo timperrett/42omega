@@ -110,3 +110,79 @@ private final case class Entity(eh: EntityHeader) extends ResponseHeader {
 private final case class General(gh: GeneralHeader) extends ResponseHeader {
   override val asString = gh.asString
 }
+
+trait ResponseHeaders {
+    /**
+   * Converts the given entity header into a response header.
+   */
+  implicit def entityToResponse(eh: EntityHeader): ResponseHeader = ftw.http.response.Entity(eh)
+
+  /**
+   * Converts the given general header into a response header.
+   */
+  implicit def generalToResponse(gh: GeneralHeader): ResponseHeader = ftw.http.response.General(gh)
+
+  /**
+   * Converts the given response header into a string.
+   */
+  implicit def ResponseHeaderString(rh: ResponseHeader) = rh.asString
+
+  /**
+   * Converts the given string into a response header.
+   */
+  implicit def StringResponseHeader(s: String): Option[ResponseHeader] = {
+    val optHeader: Option[ResponseHeader] = ResponseHeader.headers collect { 
+      case (`s`, header) => header
+    } headOption
+    
+    optHeader orElse GeneralHeader.StringGeneralHeader(s).map(generalToResponse
+      ).orElse(EntityHeader.StringEntityHeader(s).map(entityToResponse))
+  }
+}
+
+/**
+ * HTTP response headers.
+ * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14">RFC 2616 Section 14 Header Field Definitions</a>.
+ */
+object ResponseHeader extends ResponseHeaders {
+  /**
+   * For deconstructing response headers into entity headers.
+   */
+  object Entity {
+    /**
+     * Matches if the given response header is an entity header.
+     */
+    def unapply(h: ResponseHeader) = h match {
+      case ftw.http.response.Entity(x) => Some(x)
+      case _ => None
+    }
+  }
+
+  /**
+   * For deconstructing response headers into general headers.
+   */
+  object General {
+    /**
+     * Matches if the given response header is a general header.
+     */
+    def unapply(h: ResponseHeader) = h match {
+      case ftw.http.response.General(x) => Some(x)
+      case _ => None
+    }
+  }
+
+  /**
+   * A list of known response headers.
+   */
+  val headers = List(("accept-ranges", AcceptRanges),
+                     ("age", Age),
+                     ("etag", ETag),
+                     ("location", Location),
+                     ("proxy-authenticate", ProxyAuthenticate),
+                     ("retry-after", RetryAfter),
+                     ("server", Server),
+                     ("vary", Vary),
+                     ("www-authenticate", WWWAuthenticate))
+
+}
+

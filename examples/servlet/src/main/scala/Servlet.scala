@@ -1,6 +1,6 @@
 package ftw.examples.servlet
 
-import ftw._, http._, servlet._
+import ftw._, http._, servlet._, request._, response._
 
 trait WhatIsItLike {
   def yeah: String = "Like a BOSS!!!"
@@ -20,14 +20,14 @@ class LikeABoss extends OmegaFilter {
     type Env = WhatIsItLike
 
     def render(env: Env)(u: Unit) =
-      HttpResponse("text/plain", env.yeah.getBytes.toStream)
+      HttpResponse(OK, Nil, env.yeah.getBytes.toStream)
   }
 
   object Bar extends Responder[Unit, HttpResponse] {
     type Env = WhoWantsIt
 
     def render(env: Env)(u: Unit) =
-      HttpResponse("text/plain", env.meh.getBytes.toStream)
+      HttpResponse(OK, Nil, env.meh.getBytes.toStream)
   }
 
 }

@@ -189,3 +189,104 @@ private final case class Entity(eh: EntityHeader) extends RequestHeader {
 private final case class General(gh: GeneralHeader) extends RequestHeader {
   override val asString = gh.asString
 }
+
+trait RequestHeaders {
+  /**
+   * Converts the given entity header into a request header.
+   */
+  implicit def entityToRequest(eh: EntityHeader): RequestHeader = Entity(eh)
+
+  /**
+   * Converts the given general header into a request header.
+   */
+  implicit def generalToRequest(gh: GeneralHeader): RequestHeader = General(gh)
+
+  /**
+   * Converts the given string to a request header. If the string is a known request header, then it is used. If not,
+   * then it if it is a known general header, then it is used. If not then it is an entity header.
+   */
+  implicit def StringRequestHeader(s: String): Option[RequestHeader] =
+    RequestHeader.headers find {
+      case (n, h) => n.equalsIgnoreCase(s) 
+    } map (_._2) //orElse
+            // (s: Option[GeneralHeader]) ∘ (scalaz.http.request.General(_)) orElse
+            // (s: Option[EntityHeader]) ∘ (scalaz.http.request.Entity(_))
+
+  /**
+   * Converts the given list of characters to a request header. If the string is a known request header, then it is
+   * used. If not, then it if it is a known general header, then it is used. If not then it is an entity header.
+   */
+  implicit def ListRequestHeader: (List[Char] => Option[RequestHeader]) = StringRequestHeader _ compose (_.mkString)
+}
+
+/**
+ * HTTP request headers.
+ * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14">RFC 2616 Section 14 Header Field Definitions</a>.
+ */
+object RequestHeader extends RequestHeaders {
+  /**
+   * For deconstructing request headers into entity headers.
+   */
+  object Entity {
+    /**
+     * Matches if the given request header is an entity header.
+     */
+    def unapply(h: RequestHeader) = h match {
+      case ftw.http.request.Entity(x) => Some(x)
+      case _ => None
+    }
+  }
+
+  /**
+   * For deconstructing request headers into general headers.
+   */
+  object General {
+    /**
+     * Matches if the given request header is a general header.
+     */
+    def unapply(h: RequestHeader) = h match {
+      case ftw.http.request.General(x) => Some(x)
+      case _ => None
+    }
+  }
+
+  import GeneralHeader.StringGeneralHeader
+  import EntityHeader.StringEntityHeader
+
+  /**
+   * A list of known headers.
+   */
+  val headers = List(("accept", Accept),
+    ("accept-charset", AcceptCharset),
+    ("accept-encoding", AcceptEncoding),
+    ("accept-language", AcceptLanguage),
+    ("authorization", Authorization),
+    ("from", From),
+    ("host", Host),
+    ("if-match", IfMatch),
+    ("if-modified-since", IfModifiedSince),
+    ("if-none-match", IfNoneMatch),
+    ("if-range", IfRange),
+    ("if-unmodified-since", IfUnmodifiedSince),
+    ("max-forwards", MaxForwards),
+    ("proxy-authorization", ProxyAuthorization),
+    ("range", Range),
+    ("referer", Referer),
+    ("te", TE),
+    ("user-agent", UserAgent))
+
+  /**
+   * Converts a list of characters of the form "abc:def" into a potential request header and non-empty value split at
+   * the colon (:).
+   */
+  val BeforeAfter = """\s*([^:\s]+)\s*:\s*([^\s]+)\s*""".r
+  
+  def requestHeaderValue(cs: String): Option[(RequestHeader, String)] =
+    cs match {
+      case BeforeAfter(name, value) => 
+        headers.find(_._1 == name.toLowerCase).map(_._2 -> value)
+      case _ => None
+    }
+}
+
+

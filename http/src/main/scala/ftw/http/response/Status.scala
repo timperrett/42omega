@@ -1,4 +1,4 @@
-package ftw.http
+package ftw.http.response
 
 // borrowed from scalaz: thanks Tony!
 
