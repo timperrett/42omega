@@ -205,10 +205,10 @@ trait RequestHeaders {
    * Converts the given string to a request header. If the string is a known request header, then it is used. If not,
    * then it if it is a known general header, then it is used. If not then it is an entity header.
    */
-  implicit def StringRequestHeader(s: String): Option[RequestHeader] =
-    RequestHeader.headers find {
-      case (n, h) => n.equalsIgnoreCase(s) 
-    } map (_._2) //orElse
+  implicit def StringRequestHeader(s: String): Option[RequestHeader] = null
+    // RequestHeader.headers find {
+      // case (n, h) => n.equalsIgnoreCase(s) 
+    // } map (_._2) //orElse
             // (s: Option[GeneralHeader]) ∘ (scalaz.http.request.General(_)) orElse
             // (s: Option[EntityHeader]) ∘ (scalaz.http.request.Entity(_))
 

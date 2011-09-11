@@ -98,7 +98,7 @@ trait GeneralHeaders {
   /**
    * Returns a general header for the given list of characters.
    */
-  implicit def ListGeneralHeader : (List[Char] => Option[GeneralHeader]) = StringGeneralHeader _ compose (_.mkString)
+  implicit def ListGeneralHeader : (String => Option[GeneralHeader]) = StringGeneralHeader _ compose (_.mkString)
 
   /**
    * Returns a string representation for the given general header.

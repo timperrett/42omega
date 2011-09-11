@@ -14,7 +14,7 @@ sealed trait Digit {
   override def toString: String = toInt.toString
 }
 
-object Digit {
+object Digit extends Digits {
   case object _0 extends Digit {
     override val toInt = 0
   }

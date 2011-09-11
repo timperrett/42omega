@@ -24,7 +24,7 @@ sealed trait Status {
    * A <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1">reason phrase</a> associated with the
    * response status (if there is one).
    */
-  def reasonPhrase = reasonPhraseS map (_.toList)
+  def reasonPhrase = reasonPhraseS // map (_.toList)
 
   /**
    * <code>true</code> if this status code is an extension-code, <code>false</code> otherwise.

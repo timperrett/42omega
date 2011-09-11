@@ -25,11 +25,41 @@ sealed trait Version {
   def asString = "HTTP/" + major.toInt + "." + minor.toInt
 }
 
+trait Versions {
+  /**
+   * Returns a string representation for the given version.
+   */
+  implicit def VersionString(v: Version) = v.asString
+  
+  /**
+   * Returns a string representation for the given version.
+   */
+  implicit def ListVersion: (String => Option[Version]) = StringVersion _ compose (_.mkString)
+  
+  import java.lang.Character.isDigit
+  
+  /**
+   * Returns a potential version for the given string of the form <code>HTTP/major/minor</code>.
+   */
+  implicit def StringVersion(s: String): Option[Version] =
+    if (s.length < 8)
+      None
+    else {
+      val major = s charAt 5
+      val minor = s charAt 7
+      
+      if(isDigit(major) && isDigit(minor)) 
+        Some(Version.version(major.toLong - 48L, minor.toLong - 48L)) 
+      else 
+        None
+    }
+}
+
 /**
  * HTTP version.
  * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.1">RFC 2616 Section 3.1 HTTP Version</a>.
  */
-object Version {
+object Version extends Versions {
   /**
    * Extracts the major and minor numbers of the given version.
    */

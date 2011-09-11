@@ -1,10 +1,12 @@
 package ftw.http.request
 
-case class Request(
-  line: Line,
-  headers: List[(RequestHeader, List[String])],
-  body: Stream[Byte]
-)
+class Request(
+  val line: Line, 
+  val headers: List[(RequestHeader, String)], 
+  _body: => Stream[Byte]){
+    
+    lazy val body: Stream[Byte] = _body
+}
 
 import ftw.http.Version
 
