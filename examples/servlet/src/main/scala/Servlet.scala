@@ -18,9 +18,13 @@ class LikeABoss extends OmegaFilter {
 
   object Foo extends Responder[Request, Response] {
     type Env = WhatIsItLike
-
+    
+    import ResponseHeader._
+    
     def render(env: Env)(u: Request) =
-      Response(OK, Nil, env.yeah.getBytes.toStream)
+      Response(OK, 
+        List[(ResponseHeader, String)]((generalToResponse(Pragma) -> "no-cache"))
+      , env.yeah.getBytes.toStream)
   }
 
   object Bar extends Responder[Request, Response] {
