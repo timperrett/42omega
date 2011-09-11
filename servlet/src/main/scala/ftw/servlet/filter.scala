@@ -69,3 +69,35 @@ trait OmegaFilter extends Filter {
     o
   }
 }
+
+trait RawOmegaFilter extends Filter {
+
+  def routingAndEnv: (HandledPaths[(HttpServletRequest, HttpServletResponse), Unit, E], E) forSome { type E }
+
+  def path(p:String) = Vector(p.split("/").filterNot(_.isEmpty) :_*)
+
+  def init(filterConfig: FilterConfig) {}
+
+  final def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+    (request, response) match {
+      case (req:HttpServletRequest, res:HttpServletResponse) =>
+        doFilter(req, res)
+      case _ => chain.doFilter(request, response)
+    }
+  }
+
+  def doFilter(req:HttpServletRequest, res:HttpServletResponse){
+    val (routing, environment) = routingAndEnv
+
+    routing.paths.get(path(req.getRequestURI)).map{ factory =>
+      val env = environment.asInstanceOf[responder.Env]
+      val responder = factory()
+      responder.render(env)(req -> res)
+    }.getOrElse{
+      res.setStatus(404)
+    }
+
+  }
+
+  def destroy() {}
+}

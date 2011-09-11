@@ -8,11 +8,3 @@ class Request(
     lazy val body: Stream[Byte] = _body
 }
 
-import ftw.http.Version
-
-case class Line(
-  method: Method,
-  uri: Uri,
-  version: Version
-)
-

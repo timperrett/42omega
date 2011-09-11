@@ -15,19 +15,19 @@ sealed trait EntityHeader {
   /**
    * Returns <code>true</code> if this entity header is an extension header.
    */
-  // lazy val isExtension = this match {
-  //   case ExtensionHeader(_) => true
-  //   case _ => false
-  // }
+  lazy val isExtension = this match {
+     case ExtensionHeader(_) => true
+     case _ => false
+  }
 
   /**
    * Returns the result of the given function to this header if it is an extension header, otherwise returns the given
    * value.
    */
-  // def extension[X](f: NonEmptyList[Char] => X, x: => X) = this match {
-  //   case ExtensionHeader(h) => f(h)
-  //   case _ => x
-  // }
+  def extension[X](f: String => X, x: => X) = this match {
+     case ExtensionHeader(h) => f(h)
+     case _ => x
+  }
 }
 
 /**
@@ -130,9 +130,9 @@ final case object LastModified extends EntityHeader {
   override val asString = "Last-Modified"
 }
 
-// private final case class ExtensionHeader(name: NonEmptyList[Char]) extends EntityHeader {
-//   override val asString = name.list.mkString
-// }
+private final case class ExtensionHeader(name: String) extends EntityHeader {
+   override val asString = name
+}
 
 trait EntityHeaders {
   /**
@@ -159,10 +159,8 @@ trait EntityHeaders {
     case "content-type" => ContentType
     case "expires" => Expires
     case "last-modified" => LastModified
-    // case h => {
-    //   val t: List[Char] = (s: scala.collection.immutable.StringOps).toList
-    //   ExtensionHeader(nel(t.head, t.tail))
-    // }
+    case h => ExtensionHeader(h)
+
   })
 }
 

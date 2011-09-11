@@ -96,11 +96,6 @@ final case object Warning extends GeneralHeader {
 
 trait GeneralHeaders {
   /**
-   * Returns a general header for the given list of characters.
-   */
-  implicit def ListGeneralHeader : (String => Option[GeneralHeader]) = StringGeneralHeader _ compose (_.mkString)
-
-  /**
    * Returns a string representation for the given general header.
    */
   implicit def GeneralHeaderString(h: GeneralHeader) = h.asString

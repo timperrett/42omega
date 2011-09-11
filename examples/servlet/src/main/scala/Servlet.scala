@@ -2,6 +2,8 @@ package ftw.examples.servlet
 
 import ftw._, http._, servlet._, request._, response._
 
+trait Base
+
 trait WhatIsItLike {
   def yeah = "Like a BOSS!!!"
 }
@@ -13,15 +15,17 @@ trait WhoWantsIt {
 class LikeABoss extends OmegaFilter {
 
   def routingAndEnv =
-    (("foo" handledBy Foo.factory) ~ ("bar" handledBy Bar.factory),
-      new WhatIsItLike with WhoWantsIt {})
+    (("foo" handledBy Foo.factory) ~
+     ("bar" handledBy Bar.factory) ~
+     ("debug" handledBy Debug.factory),
+      new Base with WhatIsItLike with WhoWantsIt {})
 
   object Foo extends Responder[Request, Response] {
     type Env = WhatIsItLike
     
     import ResponseHeader._
     
-    def render(env: Env)(u: Request) =
+    def render(env: Env)(request: Request) =
       Response(OK, 
         List[(ResponseHeader, String)]((generalToResponse(Pragma) -> "no-cache"))
       , env.yeah.getBytes.toStream)
@@ -30,8 +34,26 @@ class LikeABoss extends OmegaFilter {
   object Bar extends Responder[Request, Response] {
     type Env = WhoWantsIt
 
-    def render(env: Env)(u: Request) =
+    def render(env: Env)(request: Request) =
       Response(OK, Nil, env.meh.getBytes.toStream)
+  }
+
+  object Debug extends Responder[Request, Response] {
+    type Env = Base
+
+    def render(env:Env)(request:Request) = {
+
+      val out = List(
+        request.line.method,
+        request.line.uri.path,
+        request.line.uri.queryString,
+        request.line.version.major,
+        request.line.version.minor,
+        request.headers.mkString("\n")
+      ).mkString("\n\n")
+
+      Response(OK, Nil, out.getBytes.toStream)
+    }
   }
 
 }
