@@ -7,7 +7,7 @@ import scala.collection.JavaConverters._
 
 trait OmegaFilter extends Filter {
 
-  def routingAndEnv: (HandledPaths[Request, Response, E], E) forSome { type E }
+  def routingAndEnv: (Handled[Request, Response, E], E) forSome { type E }
   
   def init(config: FilterConfig){}
   
@@ -41,7 +41,8 @@ trait OmegaFilter extends Filter {
       l <- line(request)
       r = new Request(l, h, isToStream(request.getInputStream)) 
       (routing, environment) = routingAndEnv
-      factory <- routing.paths.get(r.line.uri.parts)
+//      factory <- routing.paths.get(r.line.uri.parts)
+      factory <- routing.handled.find(_._1.matches(r)).map(_._2)
     } yield {
       val renderer = factory()
       val result = renderer.render(environment.asInstanceOf[renderer.Env])(r)
@@ -72,7 +73,7 @@ trait OmegaFilter extends Filter {
 
 trait RawOmegaFilter extends Filter {
 
-  def routingAndEnv: (HandledPaths[(HttpServletRequest, HttpServletResponse), Unit, E], E) forSome { type E }
+  def routingAndEnv: (Handled[(HttpServletRequest, HttpServletResponse), Unit, E], E) forSome { type E }
 
   def path(p:String) = Vector(p.split("/").filterNot(_.isEmpty) :_*)
 
@@ -89,7 +90,7 @@ trait RawOmegaFilter extends Filter {
   def doFilter(req:HttpServletRequest, res:HttpServletResponse){
     val (routing, environment) = routingAndEnv
 
-    routing.paths.get(path(req.getRequestURI)).map{ factory =>
+    routing.handled.find(_._1.matches(req -> res)).map{ case (_, factory) =>
       val env = environment.asInstanceOf[responder.Env]
       val responder = factory()
       responder.render(env)(req -> res)
