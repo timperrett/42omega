@@ -1,25 +1,25 @@
 package ftw
 
-trait Responder[-A, +B] { outer =>
+trait Responder[-A, +B, -V] { outer =>
   type Env
 
-  def respond(env: Env)(req: A): B
+  def respond(env: Env, req: A, value:V): B
   
-  def factory: ResponderFactory[A, B, this.type] = new ResponderFactory[A, B, this.type] {
+  def factory: ResponderFactory[A, B, V, this.type] = new ResponderFactory[A, B, V, this.type] {
     def responder = outer
   }
 }
 
-trait ResponderFactory[-A, +B, +R <: Responder[A, B]] {
+trait ResponderFactory[-A, +B, -V, +R <: Responder[A, B, V]] {
   def responder: R
 }
 
-trait Matcher[-A] {
-  def matches(a:A):Boolean 
+trait Route[-A, +V] { R =>
+  def unapply(a:A):Option[V]
   
-  def handledBy[A2 <: A, B, R <: Responder[A2, B]](resp: ResponderFactory[A2, B, R]): Handled[A2, B, R#Env] =
+  def handledBy[A2 <: A, B, R <: Responder[A2, B, V]](resp: ResponderFactory[A2, B, V, R]): Handled[A2, B, R#Env] =
     Handled[A2, B, R#Env]( e => {
-      case a if matches(a) => resp.asInstanceOf[ResponderFactory[A2, B, Responder[A2, B]{ type Env = R#Env}]].responder.respond(e)(a)
+      case a @ R(v) => resp.asInstanceOf[ResponderFactory[A2, B, V, Responder[A2, B, V]{ type Env = R#Env}]].responder.respond(e, a, v)
     })
 }
 

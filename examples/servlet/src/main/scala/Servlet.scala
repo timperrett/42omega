@@ -19,28 +19,33 @@ class LikeABoss extends OmegaFilter {
      ("bar" handledBy Bar.factory) ~
      ("debug" handledBy Debug.factory))(new Base with WhatIsItLike with WhoWantsIt {})
 
-  object Foo extends Responder[Request, Response] {
+  trait IgnoreParamResponder[-A, +B] extends Responder[A, B, Any] {
+    def respond(env: Env, request:A, ignore:Any): B = respond(env, request)
+    def respond(env: Env, request:A): B
+  }
+
+  object Foo extends IgnoreParamResponder[Request, Response] {
     type Env = WhatIsItLike
     
     import ResponseHeader._
     
-    def respond(env: Env)(request: Request) =
+    def respond(env: Env, request: Request) =
       Response(OK, 
         List[(ResponseHeader, String)]((generalToResponse(Pragma) -> "no-cache"))
       , env.yeah.getBytes.toStream)
   }
 
-  object Bar extends Responder[Request, Response] {
+  object Bar extends IgnoreParamResponder[Request, Response] {
     type Env = WhoWantsIt
 
-    def respond(env: Env)(request: Request) =
+    def respond(env: Env, request: Request) =
       Response(OK, Nil, env.meh.getBytes.toStream)
   }
 
-  object Debug extends Responder[Request, Response] {
+  object Debug extends IgnoreParamResponder[Request, Response] {
     type Env = Base
 
-    def respond(env:Env)(request:Request) = {
+    def respond(env:Env, request:Request) = {
 
       val out = List(
         request.line.method,
