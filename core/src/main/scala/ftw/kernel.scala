@@ -5,21 +5,21 @@ trait Responder[-A, +B, -V] { outer =>
 
   def respond(env: Env, req: A, value:V): B
   
-  def factory: ResponderFactory[A, B, V, this.type] = new ResponderFactory[A, B, V, this.type] {
-    def responder = outer
+  def factory: ResponderFactory[A, B, V, Env] = new ResponderFactory[A, B, V, Env] {
+    def respond(env:Env, req:A, value:V) = outer.respond(env, req, value)
   }
 }
 
-trait ResponderFactory[-A, +B, -V, +R <: Responder[A, B, V]] {
-  def responder: R
+trait ResponderFactory[-A, +B, -V, -E] {
+  def respond(env:E, req:A, value:V):B
 }
 
 trait Route[-A, +V] { R =>
   def unapply(a:A):Option[V]
   
-  def handledBy[A2 <: A, B, R <: Responder[A2, B, V]](resp: ResponderFactory[A2, B, V, R]): Handled[A2, B, R#Env] =
-    Handled[A2, B, R#Env]( e => {
-      case a @ R(v) => resp.asInstanceOf[ResponderFactory[A2, B, V, Responder[A2, B, V]{ type Env = R#Env}]].responder.respond(e, a, v)
+  def handledBy[A2 <: A, B, E](resp: ResponderFactory[A2, B, V, E]): Handled[A2, B, E] =
+    Handled[A2, B, E]( e => {
+      case a @ R(v) => resp.respond(e, a, v)
     })
 }
 
