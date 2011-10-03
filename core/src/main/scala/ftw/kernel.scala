@@ -18,9 +18,7 @@ trait Route[-A, +V] { R =>
   def unapply(a:A):Option[V]
   
   def handledBy[A2 <: A, B, E](resp: ResponderFactory[A2, B, V, E]): Handled[A2, B, E] =
-    Handled[A2, B, E]( e => {
-      case a @ R(v) => resp.respond(e, a, v)
-    })
+    Handled[A2, B, E]( e => { case a @ R(v) => resp.respond(e, a, v) })
 }
 
 case class Handled[-A, +B, E](handled: E => PartialFunction[A, B]) extends (E => PartialFunction[A, B]){
