@@ -15,9 +15,9 @@ trait WhoWantsIt {
 class LikeABoss extends OmegaFilter {
 
   def routing =
-    (("foo" handledBy Foo.factory) ~
-     ("bar" handledBy Bar.factory) ~
-     ("debug" handledBy Debug.factory))(new Base with WhatIsItLike with WhoWantsIt {})
+    (("foo" handledBy Foo) ~
+     ("bar" handledBy Bar) ~
+     ("debug" handledBy Debug))(new Base with WhatIsItLike with WhoWantsIt {})
 
   trait IgnoreParamResponder[-A, +B] extends Responder[A, B, Any] {
     def respond(env: Env, request:A, ignore:Any): B = respond(env, request)
