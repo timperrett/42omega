@@ -1,6 +1,6 @@
 package ftw.examples.servlet
 
-import ftw._, http._, servlet._, request._, response._
+import ftw._, http._, servlet._, request._, response._, transformer._
 
 trait Base
 
@@ -19,7 +19,7 @@ class LikeABoss extends OmegaFilter {
      ("bar" handledBy Bar) ~
      ("debug" handledBy Debug))(new Base with WhatIsItLike with WhoWantsIt {})
 
-  trait IgnoreParamResponder[-A, +B] extends Responder[A, B, Any] {
+  trait IgnoreParamResponder[-A, +B] extends Responder[A, B, Any] with Transformable {
     def respond(env: Env, request:A, ignore:Any): B = respond(env, request)
     def respond(env: Env, request:A): B
   }
@@ -32,14 +32,14 @@ class LikeABoss extends OmegaFilter {
     def respond(env: Env, request: Request) =
       Response(OK, 
         List[(ResponseHeader, String)]((generalToResponse(Pragma) -> "no-cache"))
-      , env.yeah.getBytes.toStream)
+      , toByteChunk(env.yeah))
   }
 
   object Bar extends IgnoreParamResponder[Request, Response] {
     type Env = WhoWantsIt
 
     def respond(env: Env, request: Request) =
-      Response(OK, Nil, env.meh.getBytes.toStream)
+      Response(OK, Nil, toByteChunk(env.meh))
   }
 
   object Debug extends IgnoreParamResponder[Request, Response] {
