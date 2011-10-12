@@ -44,12 +44,6 @@ object Build extends Build {
   lazy val servlet: Project = Project("servlet", file("servlet"), 
     settings = buildSettings ++ servletSettings) dependsOn(http)
   
-  lazy val netty = Project("netty", file("netty"),
-    settings = buildSettings ++ Seq(
-      libraryDependencies += "org.jboss.netty" % "netty" % "3.2.5.Final",
-      resolvers += "JBoss repo" at "http://repository.jboss.org/nexus/content/groups/public"
-  ))
-  
   lazy val examples = Project("examples", file("examples"),
     settings = buildSettings,
     aggregate = Seq(exampleServlet)
