@@ -35,11 +35,8 @@ object Build extends Build {
   lazy val core: Project = Project("core", file("core"), 
     settings = buildSettings)
   
-  lazy val transformers: Project = Project("transformer", file("transformer"),
-    settings = buildSettings)
-  
   lazy val http: Project = Project("http", file("http"), 
-    settings = buildSettings) dependsOn(core, transformers)
+    settings = buildSettings) dependsOn(core)
   
   lazy val servlet: Project = Project("servlet", file("servlet"), 
     settings = buildSettings ++ servletSettings) dependsOn(http)
